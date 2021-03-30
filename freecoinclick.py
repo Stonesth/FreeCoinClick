@@ -3,6 +3,7 @@
 from Tools import tools_v000 as tools
 import os
 import time
+import platform
 from os.path import dirname
 import selenium
 from selenium.webdriver.common.keys import Keys
@@ -35,6 +36,7 @@ freebinancecoin = tools.readProperty(propertiesFolder_path, 'FreeCoinClick', 'fr
 freedoge = tools.readProperty(propertiesFolder_path, 'FreeCoinClick', 'freedoge=')
 
 dealy_properties = 30
+test = True
 
 def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
 #     tools.waitLoadingPageByXPATH2(dealy_properties, '/html/body/main/section/section[3]/div/div[3]/iframe')
@@ -66,7 +68,10 @@ def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
         for char in password:
             pyperclip.copy(char)
             # print(char)
-            pyautogui.hotkey('command', 'v', interval=0.01)
+            if platform.system() == 'Darwin' :
+                pyautogui.hotkey('command', 'v', interval=0.1)
+            else :
+                pyautogui.hotkey('ctrl', 'v', interval=0.1)
 
         time.sleep(1)
 
@@ -75,19 +80,30 @@ def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
         
         time.sleep(3)
 
-        # test if the Countdown still visible
-        # tools.waitLoadingPageByXPATH2(dealy_properties, '/html/body/main/div/div/div/div/div/div[2]/div[1]')
-        # test = tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[2]/div[1]")
-        # while (test.get_attribute("style") != "display: none;") :
-        #     time.sleep(1)
-        #     print (test.get_attribute("style"))
-        #     if (tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[2]/div[1]") == 'display: none;')  :
-        #         print (test.get_attribute("style"))
-        #         break
-
-        tools.waitLoadingPageByXPATH2(dealy_properties, '/html/body/main/div/div/div/div/div/div[5]/button')
-        rool = tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[5]/button")
-        rool.click()
+        if (test == False ) :
+            # test if the Countdown still visible
+            tools.waitLoadingPageByXPATH2(dealy_properties, '/html/body/main/div/div/div/div/div/div[2]/div[1]')        
+            tools.waitLoadingPageByXPATH2(dealy_properties, '/html/body/main/div/div/div/div/div/div[5]/button')
+            rool = tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[5]/button")
+            while (True) : 
+                # test = tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[2]/div[1]")
+                
+                # 
+                # # print (test.get_attribute("style"))
+                # if (test.get_attribute("style") == "display: none;") :
+                #     break
+                # if (rool.get_attribute("style") != "display: none;") :
+                #     break
+                try :
+                    time.sleep(1)
+                    rool.click()
+                    break
+                except selenium.common.exceptions.ElementNotInteractableException:
+                    print('Already run for this url ' + url) # Normally never append again with the test if the countdown still present
+        else :
+            tools.waitLoadingPageByXPATH2(dealy_properties, '/html/body/main/div/div/div/div/div/div[5]/button')
+            rool = tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[5]/button")
+            rool.click()
         
         time.sleep(10)
     except selenium.common.exceptions.NoSuchElementException:
@@ -158,12 +174,13 @@ def jobs() :
     # Close Browser
     tools.closeBrowserChrome()
 
-# scheduler = BlockingScheduler()
 
-# # Schedules job_function to be run on the all minute
-# scheduler.add_job(jobs, 'cron', minute=(19) )
+if (test == False) :
+    scheduler = BlockingScheduler()
 
-# scheduler.start()
+    # Schedules job_function to be run on the all minute
+    scheduler.add_job(jobs, 'cron', minute=(1) )
 
-
-jobs()
+    scheduler.start()
+else :
+    jobs()  
