@@ -173,6 +173,7 @@ def jobs() :
 
     # Close Browser
     tools.closeBrowserChrome()
+    tools.driver.quit()
 
 
 if (test == False) :
