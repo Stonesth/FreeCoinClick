@@ -61,6 +61,20 @@ def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
 
         # Go to the password
         pyautogui.click(int(X2), int(Y2), button='left')
+
+        driver_len = len(tools.driver.window_handles) #fetching the Number of Opened tabs
+        while (driver_len > 1) :
+            # print("Length of Driver = ", driver_len)
+            if driver_len > 1: # Will execute if more than 1 tabs found.
+                for i in range(driver_len - 1, 0, -1):
+                    tools.driver.switch_to.window(tools.driver.window_handles[i]) #will close the last tab first.
+                    tools.driver.close()
+                    # print("Closed Tab No. ", i)
+                tools.driver.switch_to.window(tools.driver.window_handles[0]) # Switching the driver focus to First tab.
+                pyautogui.click(int(X2), int(Y2), button='left')
+            else:
+                print("Found only Single tab.")
+            driver_len = len(tools.driver.window_handles) #fetching the Number of Opened tabs
         
         time.sleep(2)
 
@@ -69,9 +83,9 @@ def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
             pyperclip.copy(char)
             # print(char)
             if platform.system() == 'Darwin' :
-                pyautogui.hotkey('command', 'v', interval=0.1)
+                pyautogui.hotkey('command', 'v', interval=0.01)
             else :
-                pyautogui.hotkey('ctrl', 'v', interval=0.1)
+                pyautogui.hotkey('ctrl', 'v', interval=0.01)
 
         time.sleep(1)
 
@@ -125,6 +139,7 @@ def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
 
 def jobs() :
     # Open Browser
+    print(str(datetime.now()))
     tools.openBrowserBrave()
 
     farray = freenem.split(", ")
