@@ -126,7 +126,24 @@ def enterCredentials(url, user, password, X1, Y1, X2, Y2, Y3) :
         print('Already run for this url ' + url) # Normally never append again with the test if the countdown still present
     except selenium.common.exceptions.UnexpectedAlertPresentException:
         print('Error with this url robot alert => skip : ' + url)
+        # Try to refresh the page until past to the next step
+        
+        while (True) :
+            try : 
+                if platform.system() == 'Darwin' :
+                    pyautogui.hotkey('command', 'r')
+                else :
+                    pyautogui.hotkey('ctrl', 'r')
+                
+                time.sleep(1)
+                rool = tools.driver.find_element_by_xpath("/html/body/main/div/div/div/div/div/div[5]/button")
+                rool.click()
 
+                time.sleep(10)
+                break
+            except selenium.common.exceptions.UnexpectedAlertPresentException:
+                print('Error with this url robot alert => skip : ' + url)
+  
 
     # pyautogui.hotkey('command', 'w', interval=0.1)
 
